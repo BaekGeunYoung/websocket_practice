@@ -4,38 +4,36 @@ import queryString from 'query-string';
 import "./index.scss";
 
 type Message = {
-    displayName: string,
-    message: string
+    author: string,
+    text: string
+}
+
+type PathVariables = {
+    id: number
 }
 
 const ChatPage = ({ history, location, match }: RouteComponentProps) => {
     const params = queryString.parse(location.search)
     const displayName = params.display_name
-    const roomName = params.room_name
 
-    const ws = new WebSocket("ws://localhost:8080/ws");
+    const {id} = match.params as PathVariables
+
+    const [ws, setWs] = useState<WebSocket>();
     const [messages, setMessages] = useState<Array<Message>>([]);
     const [newMsg, setNewMsg] = useState<Message | undefined>(undefined);
     const [currMsg, setCurrMsg] = useState("");
 
     useEffect(() => {
-        const data = {
-            meta: "join",
-            roomName: roomName,
-            displayName: displayName
-        }
-
-        // ws = new WebSocket("ws://localhost:8080/ws");
-
-        ws.onopen = () => {
-            console.log("connected!!");
-            ws.send(JSON.stringify(data))
-        };
-
-        ws.onmessage = (evt) => {
-            setNewMsg(JSON.parse(evt.data))
-        };
+        setWs(new WebSocket(`ws://localhost:8080/chat/${id}?name=${displayName}`))
     }, [])
+
+    useEffect(() => {
+        if (ws) {
+            ws.onmessage = (evt) => {
+                setNewMsg(JSON.parse(evt.data))
+            };
+        }
+    }, [ws])
 
     useEffect(() => {
         if (newMsg) {
@@ -55,13 +53,7 @@ const ChatPage = ({ history, location, match }: RouteComponentProps) => {
             return
         }
 
-        const data = {
-            roomName: roomName,
-            displayName: displayName,
-            message: currMsg
-        }
-
-        ws.send(JSON.stringify(data))
+        ws!!.send(currMsg)
 
         setCurrMsg("")
     }
@@ -73,18 +65,18 @@ const ChatPage = ({ history, location, match }: RouteComponentProps) => {
     return (
         <div className={"chat-page-container"}>
             <div className={"room-name-container"}>
-                {roomName}
+                {id}
             </div>
             <div className={"chat-message-list-container"}>
                 <div className={"chat-message-list-inner-container"}>
                     {
                         messages.map(message =>
-                            <div className={`chat-message-form ${message.displayName === displayName ? "me" : "other"}`}>
+                            <div className={`chat-message-form ${message.author === displayName ? "me" : "other"}`}>
                                 <div className={"chat-message-inner-form"}>
                                     <div className={`chat-display-name`}>
-                                        {message.displayName}
+                                        {message.author}
                                     </div>
-                                    <div className={"chat-message"}>{message.message}</div>
+                                    <div className={"chat-message"}>{message.text}</div>
                                 </div>
                             </div>
                         )

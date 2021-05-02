@@ -4,14 +4,14 @@ import "./index.scss";
 
 const IntroPage = ({history}: RouteComponentProps) => {
     const [displayName, setDisplayName] = useState("")
-    const [roomName, setRoomName] = useState("")
+    const [roomNumber, setRoomNumber] = useState(0)
 
     const handleChangeDpName = (dpName: string) => setDisplayName(dpName)
 
-    const handleChangeRoomName = (roomName: string) => setRoomName(roomName)
+    const handleChangeRoomName = (roomName: string) => setRoomNumber(parseInt(roomName))
 
     const handleClickJoinButton = () => {
-        history.push(`/chat?display_name=${displayName}&room_name=${roomName}`)
+        history.push(`/chat/${roomNumber}?display_name=${displayName}`)
     }
 
     return (

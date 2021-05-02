@@ -9,7 +9,7 @@ function App() {
         <BrowserRouter>
           <Switch>
             <Route exact path={"/"} component={IntroPage}/>
-            <Route exact path={"/chat"} component={ChatPage}/>
+            <Route exact path={"/chat/:id"} component={ChatPage}/>
           </Switch>
         </BrowserRouter>
       </div>
