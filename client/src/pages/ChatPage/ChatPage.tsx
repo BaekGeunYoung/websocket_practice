@@ -5,7 +5,7 @@ import "./index.scss";
 
 type Message = {
     author: string,
-    text: string
+    message: string
 }
 
 type PathVariables = {
@@ -24,7 +24,7 @@ const ChatPage = ({ history, location, match }: RouteComponentProps) => {
     const [currMsg, setCurrMsg] = useState("");
 
     useEffect(() => {
-        setWs(new WebSocket(`ws://localhost:8080/chat/${id}?name=${displayName}`))
+        setWs(new WebSocket(`ws://localhost:8080/chat?id=${id}&name=${displayName}`))
     }, [])
 
     useEffect(() => {
@@ -76,7 +76,7 @@ const ChatPage = ({ history, location, match }: RouteComponentProps) => {
                                     <div className={`chat-display-name`}>
                                         {message.author}
                                     </div>
-                                    <div className={"chat-message"}>{message.text}</div>
+                                    <div className={"chat-message"}>{message.message}</div>
                                 </div>
                             </div>
                         )
