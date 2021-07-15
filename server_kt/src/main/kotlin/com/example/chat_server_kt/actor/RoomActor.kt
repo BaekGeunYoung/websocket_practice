@@ -1,5 +1,7 @@
 package com.example.chat_server_kt.actor
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
@@ -14,7 +16,7 @@ data class Terminated(val username: String): RoomActorMsg()
 data class IncomingMessage(val username: String, val message: String): RoomActorMsg()
 
 @ObsoleteCoroutinesApi
-fun roomActor(roomId: Int) = GlobalScope.actor<RoomActorMsg> {
+fun roomActor(roomId: Int) = CoroutineScope(Dispatchers.Default).actor<RoomActorMsg> {
     val log = LoggerFactory.getLogger("roomActorLogger")
 
     val users = ConcurrentHashMap<String, SendChannel<UserActorMsg>>()

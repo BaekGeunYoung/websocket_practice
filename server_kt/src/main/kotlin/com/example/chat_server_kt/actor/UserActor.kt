@@ -1,5 +1,7 @@
 package com.example.chat_server_kt.actor
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
@@ -11,7 +13,7 @@ object Completed: UserActorMsg()
 data class UserIncomingMessage(val username: String, val message: String): UserActorMsg()
 data class UserOutgoingMessage(val author: String, val message: String): UserActorMsg()
 
-fun userActor(roomActor: SendChannel<RoomActorMsg>) = GlobalScope.actor<UserActorMsg> {
+fun userActor(roomActor: SendChannel<RoomActorMsg>) = CoroutineScope(Dispatchers.Default).actor<UserActorMsg> {
     lateinit var routeActor: SendChannel<UserOutgoingMessage>
     lateinit var username: String
     val roomActor = roomActor
